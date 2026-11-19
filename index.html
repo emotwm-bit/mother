@@ -1,0 +1,995 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>媽媽的照顧日誌</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
+<style>
+/* Layout: one phone-width column of colored "cards" stacked like a family notebook. Each card has its own tint, a raised edge, and numbered how-to steps before the inputs. */
+:root{
+  color-scheme:light;
+  --bg:#FFF6EC; --ink:#2A2320; --muted:#6B5E57; --paper:#FFFFFF; --line:#EADBCB;
+  --accent:#E0703F; --accent-ink:#FFFFFF; --accent-deep:#B5512A;
+  --t-med:#DDF2E6;  --e-med:#9FD3B5;  --k-med:#2E7A55;
+  --t-bp:#FCE1DE;   --e-bp:#F0AFA8;   --k-bp:#B2423A;
+  --t-bow:#FFF0C7;  --e-bow:#EDCF7A;  --k-bow:#8A6410;
+  --t-meal:#FFE3CF; --e-meal:#F2B58C; --k-meal:#A4531E;
+  --t-rem:#DCEBFB;  --e-rem:#A6C8EE;  --k-rem:#2D5F98;
+  --t-mood:#ECE4FA; --e-mood:#C4B2EC; --k-mood:#5D44A0;
+  --t-note:#E8F2D6; --e-note:#B8D38B; --k-note:#4D6B1E;
+  --t-sug:#FBE3EF;  --e-sug:#EBADCB;  --k-sug:#9C3767;
+  --ok:#2E7A55; --ok-soft:#D3EEDD; --warn:#94600B; --warn-soft:#FFEBC2; --alert:#B2362C; --alert-soft:#FBD9D4;
+  --shadow:rgba(120,70,40,.18);
+  --f-display:"LXGW WenKai TC","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  --f-body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-top:calc(22px + env(safe-area-inset-top,0px));padding-bottom:calc(56px + env(safe-area-inset-bottom,0px));
+  background-image:radial-gradient(circle at 12% 4%, var(--t-meal) 0, transparent 220px),radial-gradient(circle at 92% 18%, var(--t-rem) 0, transparent 200px);background-repeat:no-repeat}
+.wrap{max-width:640px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+h1,h2,h3{font-family:var(--f-display);font-weight:700;margin:0;text-wrap:balance}
+h1{font-size:36px;line-height:1.2}
+h2{font-size:24px;line-height:1.3}
+h3{font-size:19px;line-height:1.3}
+p{margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* header */
+.hero{display:flex;gap:14px;align-items:center}
+.hero-mark{flex:none;width:64px;height:64px;border-radius:50%;background:var(--t-meal);border:3px solid var(--e-meal);display:grid;place-items:center;box-shadow:0 4px 0 var(--e-meal)}
+.hero-mark svg{width:34px;height:34px;color:var(--k-meal)}
+.sub{color:var(--muted);font-size:15px}
+.bar{background:var(--paper);border-radius:20px;padding:8px;display:flex;align-items:center;gap:6px;box-shadow:0 3px 0 var(--line),0 10px 22px -12px var(--shadow)}
+.bar button{border:0;background:transparent;min-width:48px;min-height:48px;border-radius:14px;font-size:24px;color:var(--accent);font-weight:700}
+.bar button:hover{background:var(--t-meal)}
+.bar button:disabled{opacity:.3;cursor:default}
+.bar .day{flex:1;text-align:center;font-weight:900;font-size:19px}
+.bar .today-btn{font-size:15px;padding:0 14px;border:2px solid var(--accent)!important}
+.who{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.who label{font-weight:700}
+.who select{min-height:46px;border:2px solid var(--line);background:var(--paper);border-radius:14px;padding:0 14px;font-size:17px;color:var(--ink)}
+.banner{border-radius:14px;padding:12px 16px;background:var(--warn-soft);color:var(--warn);font-size:15px}
+
+/* status */
+.status{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.chip{border-radius:18px;padding:12px 16px;display:flex;flex-direction:column;background:var(--paper);border:2px solid var(--line);box-shadow:0 3px 0 var(--line)}
+.chip .k{font-size:14px;color:var(--muted);font-weight:500}
+.chip .v{font-size:21px;font-weight:900}
+.chip.ok{background:var(--ok-soft);border-color:var(--ok);box-shadow:0 3px 0 var(--ok)}.chip.ok .v{color:var(--ok)}
+.chip.warn{background:var(--warn-soft);border-color:var(--warn);box-shadow:0 3px 0 var(--warn)}.chip.warn .v{color:var(--warn)}
+.chip.alert{background:var(--alert-soft);border-color:var(--alert);box-shadow:0 3px 0 var(--alert)}.chip.alert .v{color:var(--alert)}
+.copybox{display:flex;flex-direction:column;gap:8px}
+.copybox textarea{width:100%;min-height:150px;border-radius:14px;border:2px solid var(--line);background:var(--paper);padding:10px 12px;font-size:15px}
+
+/* cards */
+.card{--t:var(--paper);--e:var(--line);--k:var(--accent);
+  background:var(--t);border:2px solid var(--e);border-radius:24px;padding:20px 18px 22px;display:flex;flex-direction:column;gap:16px;
+  box-shadow:0 6px 0 var(--e),0 16px 28px -14px var(--shadow);position:relative}
+.card.med{--t:var(--t-med);--e:var(--e-med);--k:var(--k-med)}
+.card.bp{--t:var(--t-bp);--e:var(--e-bp);--k:var(--k-bp)}
+.card.bow{--t:var(--t-bow);--e:var(--e-bow);--k:var(--k-bow)}
+.card.meal{--t:var(--t-meal);--e:var(--e-meal);--k:var(--k-meal)}
+.card.rem{--t:var(--t-rem);--e:var(--e-rem);--k:var(--k-rem)}
+.card.mood{--t:var(--t-mood);--e:var(--e-mood);--k:var(--k-mood)}
+.card.note{--t:var(--t-note);--e:var(--e-note);--k:var(--k-note)}
+.card.sug{--t:var(--t-sug);--e:var(--e-sug);--k:var(--k-sug)}
+.card.sos{--t:var(--alert-soft);--e:var(--alert);--k:var(--alert)}
+.card.body{--t:var(--t-rem);--e:var(--e-rem);--k:var(--k-rem)}
+.card-head{display:flex;gap:12px;align-items:center}
+.icon{flex:none;width:48px;height:48px;border-radius:16px;background:var(--paper);border:2px solid var(--e);display:grid;place-items:center;box-shadow:0 3px 0 var(--e)}
+.icon svg{width:26px;height:26px;color:var(--k)}
+.card-head .h{display:flex;flex-direction:column;min-width:0}
+.card-head h2{color:var(--k)}
+.card-head .hint{font-size:14px;color:var(--muted)}
+.inner{background:var(--paper);border-radius:18px;padding:14px 16px;display:flex;flex-direction:column;gap:12px;box-shadow:inset 0 -3px 0 var(--line)}
+
+/* numbered steps */
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.steps li{display:flex;gap:10px;align-items:flex-start;font-size:16px}
+.num{flex:none;width:28px;height:28px;border-radius:50%;background:var(--k);color:var(--paper);font-weight:900;font-size:15px;display:grid;place-items:center;margin-top:1px}
+.steps b{color:var(--k)}
+
+/* controls */
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.field label{font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px}
+.field label .num{width:24px;height:24px;font-size:13px}
+.field input,.field textarea,.field select{width:100%;min-height:54px;border:2px solid var(--line);border-radius:14px;background:var(--bg);padding:8px 14px;font-size:19px;color:var(--ink)}
+.field input:focus,.field textarea:focus{border-color:var(--k);outline:none;box-shadow:0 0 0 3px var(--t)}
+.field textarea{min-height:90px;resize:vertical;font-size:17px}
+.field .eg{font-size:13px;color:var(--muted)}
+.bp-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.big{min-height:56px;border-radius:16px;border:0;background:var(--k);color:var(--paper);font-weight:900;font-size:18px;padding:0 22px;box-shadow:0 4px 0 color-mix(in srgb,var(--k) 60%,#000);transition:transform .08s}
+.big:active{transform:translateY(3px);box-shadow:0 1px 0 color-mix(in srgb,var(--k) 60%,#000)}
+.big.full{width:100%}
+.ghost{min-height:52px;border-radius:14px;border:2px solid var(--k);background:var(--paper);color:var(--k);font-weight:700;padding:0 16px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.row .field{flex:1 1 200px}
+.list{display:flex;flex-direction:column;gap:8px}
+.empty{color:var(--muted);font-size:15px}
+
+.med-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:2px dashed var(--line)}
+.med-item:first-child{border-top:0;padding-top:0}
+.med-item .info{flex:1;min-width:0}
+.med-item .name{font-weight:900;font-size:18px}
+.med-item .meta{font-size:14px;color:var(--muted)}
+.tick{min-width:104px;min-height:52px;border-radius:16px;border:2px solid var(--k);background:var(--paper);color:var(--k);font-weight:900;font-size:17px;padding:0 12px;box-shadow:0 3px 0 var(--e)}
+.tick.done{background:var(--k);color:var(--paper);box-shadow:0 3px 0 color-mix(in srgb,var(--k) 60%,#000)}
+.subhead{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+
+.reading{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 12px;border-radius:14px;background:var(--bg);font-variant-numeric:tabular-nums;flex-wrap:wrap}
+.reading .n{font-size:22px;font-weight:900}
+.reading .t{font-size:14px;color:var(--muted)}
+.flag{font-size:14px;font-weight:900;border-radius:14px;padding:3px 12px;text-align:center}
+.flag.ok{background:var(--ok-soft);color:var(--ok)}
+.flag.warn{background:var(--warn-soft);color:var(--warn)}
+.flag.alert{background:var(--alert-soft);color:var(--alert)}
+.x{border:0;background:transparent;color:var(--muted);min-width:44px;min-height:44px;border-radius:12px;font-size:20px}
+.x:hover{background:var(--line)}
+
+.seg{display:flex;flex-wrap:wrap;gap:10px}
+.seg button{min-height:54px;padding:0 18px;border-radius:16px;border:2px solid var(--e);background:var(--paper);font-size:17px;font-weight:700;box-shadow:0 3px 0 var(--e)}
+.seg button[aria-pressed="true"]{background:var(--k);border-color:var(--k);color:var(--paper);box-shadow:0 3px 0 color-mix(in srgb,var(--k) 60%,#000)}
+.week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;text-align:center}
+.week .d{display:flex;flex-direction:column;gap:4px;align-items:center;font-size:13px;color:var(--muted)}
+.dot{width:30px;height:30px;border-radius:50%;border:2px dashed var(--e);background:var(--paper)}
+.dot.yes{background:var(--ok);border:2px solid var(--ok)}
+.dot.no{background:var(--warn-soft);border:2px solid var(--warn)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:14px;height:14px;border-radius:50%;display:inline-block;flex:none}
+.alertline{font-size:16px;color:var(--alert);font-weight:900;background:var(--alert-soft);border-radius:12px;padding:8px 12px}
+
+.check{display:flex;gap:12px;align-items:center;padding:10px 0;border-top:2px dashed var(--line)}
+.check:first-child{border-top:0;padding-top:0}
+.check input{width:28px;height:28px;accent-color:var(--k);flex:none}
+.check label{flex:1;min-width:0;font-size:17px}
+.check.done label{color:var(--muted);text-decoration:line-through}
+
+.timeline{display:flex;flex-direction:column;gap:14px}
+.tl{display:grid;grid-template-columns:64px minmax(0,1fr);gap:12px}
+.tl .t{font-variant-numeric:tabular-nums;color:var(--k);font-weight:900;padding-top:2px}
+.tl .body{border-left:3px solid var(--e);padding-left:12px;display:flex;flex-direction:column;gap:2px}
+.tl .by{font-size:13px;color:var(--muted)}
+
+details.settings{background:var(--paper);border:2px solid var(--line);border-radius:24px;padding:16px 18px;box-shadow:0 6px 0 var(--line)}
+details.settings summary{cursor:pointer;font-weight:900;font-size:18px;min-height:40px;display:flex;align-items:center}
+.set-block{display:flex;flex-direction:column;gap:8px;margin-top:16px}
+.set-row{display:grid;grid-template-columns:minmax(0,1fr) 112px 44px;gap:8px;align-items:center}
+.set-row.single{grid-template-columns:minmax(0,1fr) 44px}
+.set-row input{min-height:48px;border:2px solid var(--line);border-radius:12px;background:var(--bg);padding:6px 10px;width:100%;font-size:16px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(22px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:12px 20px;border-radius:22px;font-size:16px;font-weight:700;z-index:20;box-shadow:0 8px 20px -6px var(--shadow);max-width:calc(100vw - 32px);text-align:center}
+footer{font-size:13px;color:var(--muted);text-align:center}
+.sos-strip{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--alert-soft);border:2px solid var(--alert);border-radius:20px;padding:12px 16px;box-shadow:0 4px 0 var(--alert)}
+.sos-strip .txt{flex:1 1 200px;min-width:0}
+.sos-strip .lbl{font-size:14px;color:var(--alert);font-weight:900}
+.sos-strip .ph{font-size:22px;font-weight:900}
+.sos-strip a{min-height:48px;display:inline-flex;align-items:center;padding:0 16px;border-radius:14px;background:var(--alert);color:var(--paper);font-weight:900;text-decoration:none}
+.c119{background:var(--alert);color:var(--paper);border-radius:18px;padding:14px 16px;display:flex;flex-direction:column;gap:4px}
+.c119 b{font-size:26px}
+.contact{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-top:2px dashed var(--line)}
+.contact:first-child{border-top:0;padding-top:0}
+.order{flex:none;width:34px;height:34px;border-radius:50%;background:var(--alert);color:var(--paper);font-weight:900;display:grid;place-items:center}
+.contact .info{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.contact .nm{font-weight:900;font-size:19px}
+.contact .where{font-size:14px;color:var(--muted)}
+.contact .tip{font-size:15px;background:var(--warn-soft);color:var(--warn);border-radius:10px;padding:6px 10px;font-weight:700}
+.first-badge{display:inline-block;font-size:13px;background:var(--alert);color:var(--paper);border-radius:14px;padding:1px 10px;margin-left:6px;vertical-align:middle}
+.when li{font-size:16px}
+.cups{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px}
+.cup{aspect-ratio:3/4;max-width:100%;border-radius:8px 8px 14px 14px;border:2px solid var(--k);background:var(--paper);padding:0;position:relative;overflow:hidden}
+.cup.full{background:linear-gradient(to top,var(--k) 0 70%,var(--paper) 70%)}
+.cupcount{font-weight:900;color:var(--k)}
+.chg{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border-radius:12px;background:var(--bg)}
+.chg .d{font-size:13px;color:var(--muted)}
+@media (max-width:440px){.bp-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.bp-grid .field:last-child{grid-column:1/-1}h1{font-size:30px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+/* bilingual: Indonesian main line, Chinese small line under it */
+.i18n{display:inline-block;min-width:0;text-align:inherit}
+.zh{display:block;font-family:var(--f-body);font-size:.74em;font-weight:500;line-height:1.35;opacity:.8}
+.big,.ghost,.tick,.seg button,.sos-strip a,.bar .today-btn{padding-block:7px;line-height:1.3}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header style="display:flex;flex-direction:column;gap:14px">
+    <div class="hero">
+      <div class="hero-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg></div>
+      <div>
+        <h1>媽媽的照顧日誌</h1>
+        <p class="sub">看護和家人一起記，大家打開都看得到</p>
+      </div>
+    </div>
+    <div class="bar">
+      <button id="prevDay" aria-label="前一天">‹</button>
+      <div class="day" id="dayLabel">今天</div>
+      <button id="nextDay" aria-label="後一天">›</button>
+      <button id="goToday" class="today-btn">回今天</button>
+    </div>
+    <div class="who">
+      <label for="whoSel">我是</label>
+      <select id="whoSel">
+        <option>看護</option><option>秀敏姐</option><option>台中大姐</option><option>台北二姐</option><option>曉雯姐姐</option><option>家人</option>
+      </select>
+      <span class="sub">先選好，記錄會寫上你的名字</span>
+    </div>
+    <div id="offline" class="banner" hidden>目前無法連線到共用紀錄，畫面上的資料不會存起來。</div>
+    <div class="sos-strip">
+      <div class="txt"><p class="lbl">有狀況，先打給</p><p class="ph" id="firstCall"></p></div>
+      <a href="#sos">看緊急聯絡人</a>
+    </div>
+  </header>
+
+  <div class="status" id="status" aria-live="polite"></div>
+  <div class="inner" style="border:2px solid var(--line)">
+    <h3>今天全部狀況（家人看這裡）</h3>
+    <p id="overview" style="white-space:pre-line;font-size:16px"></p>
+  </div>
+  <div class="copybox">
+    <button class="ghost" id="copySum" type="button" style="--k:var(--accent);--e:var(--line)">複製今天的摘要，貼到 LINE 群組</button>
+    <textarea id="sumBox" aria-label="今天的摘要" readonly hidden></textarea>
+  </div>
+
+  <!-- 1 meds + supplements -->
+  <section class="card med" aria-labelledby="h-med">
+    <div class="card-head">
+      <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8.5" width="18" height="7" rx="3.5" transform="rotate(-35 12 12)"/><path d="M9.2 7.9 14.8 16"/></svg></div>
+      <div class="h"><h2 id="h-med">吃藥和營養品</h2><span class="hint">吃完按一下，自動記時間</span></div>
+    </div>
+    <ol class="steps">
+      <li><span class="num">1</span><span>把藥或營養品拿給媽媽，<b>看她吞下去</b></span></li>
+      <li><span class="num">2</span><span>按右邊的<b>「吃了」</b>，會自動記下幾點、誰給的</span></li>
+      <li><span class="num">3</span><span>按錯了？<b>再按一次</b>就取消</span></li>
+    </ol>
+    <div class="inner">
+      <div class="subhead"><h3>藥</h3></div>
+      <div id="meds"></div>
+    </div>
+    <div class="inner">
+      <div class="subhead"><h3>營養品</h3><span class="hint" style="font-size:13px;color:var(--muted)">名稱在最下面「設定」新增</span></div>
+      <div id="sups"></div>
+    </div>
+    <div class="inner">
+      <div class="subhead"><h3>醫生改藥紀錄</h3><span style="font-size:13px;color:var(--muted)">回診後藥有變，一定要寫</span></div>
+      <ol class="steps">
+        <li><span class="num">1</span><span>寫<b>改了什麼</b>，例如「血壓藥從一顆改半顆」</span></li>
+        <li><span class="num">2</span><span>寫<b>哪家醫院、哪位醫生</b></span></li>
+        <li><span class="num">3</span><span>按<b>「記下改藥」</b>，再到「設定」把藥名或時間改好</span></li>
+      </ol>
+      <div class="field"><label for="chgWhat">改了什麼</label><input id="chgWhat" placeholder="例：晚上的藥多一顆胃藥"></div>
+      <div class="field"><label for="chgDoc">哪家醫院、哪位醫生</label><input id="chgDoc" placeholder="例：高醫 王醫師"></div>
+      <button class="big full" id="chgAdd" type="button">記下改藥</button>
+      <div class="list" id="chgList"></div>
+    </div>
+  </section>
+
+  <!-- 2 BP -->
+  <section class="card bp" aria-labelledby="h-bp">
+    <div class="card-head">
+      <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/><path d="M5.5 12h3l1.5-3 2 6 1.5-3h5"/></svg></div>
+      <div class="h"><h2 id="h-bp">量血壓</h2><span class="hint">一天至少量一次</span></div>
+    </div>
+    <ol class="steps">
+      <li><span class="num">1</span><span>讓媽媽<b>坐好、休息 5 分鐘</b>再量，手臂放在桌上</span></li>
+      <li><span class="num">2</span><span>量完看血壓計：<b>最上面的大數字</b>填「上壓」、<b>中間</b>填「下壓」、<b>最下面</b>填「心跳」</span></li>
+      <li><span class="num">3</span><span>按<b>「記下這次血壓」</b>，下面就會出現這筆紀錄</span></li>
+    </ol>
+    <div class="inner">
+      <div class="bp-grid">
+        <div class="field"><label for="sys"><span class="num">1</span>上壓</label><input id="sys" inputmode="numeric" pattern="[0-9]*" placeholder="128"><span class="eg">最上面的數字</span></div>
+        <div class="field"><label for="dia"><span class="num">2</span>下壓</label><input id="dia" inputmode="numeric" pattern="[0-9]*" placeholder="76"><span class="eg">中間的數字</span></div>
+        <div class="field"><label for="pulse"><span class="num">3</span>心跳</label><input id="pulse" inputmode="numeric" pattern="[0-9]*" placeholder="72"><span class="eg">最下面的數字</span></div>
+      </div>
+      <button class="big full" id="bpAdd" type="button">記下這次血壓</button>
+    </div>
+    <div class="list" id="bpList"></div>
+  </section>
+
+  <!-- 3 bowel -->
+  <section class="card bow" aria-labelledby="h-bow">
+    <div class="card-head">
+      <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M8 12l3 3 5-6"/></svg></div>
+      <div class="h"><h2 id="h-bow">排便</h2><span class="hint">每天都要記，有沒有都記</span></div>
+    </div>
+    <ol class="steps">
+      <li><span class="num">1</span><span>按<b>「今天有排便」</b>或<b>「今天沒有」</b></span></li>
+      <li><span class="num">2</span><span>有排便的話，簡單寫一下<b>軟硬、量多少</b></span></li>
+    </ol>
+    <div class="seg" id="bowelSeg">
+      <button type="button" data-v="yes" aria-pressed="false">今天有排便</button>
+      <button type="button" data-v="no" aria-pressed="false">今天沒有</button>
+    </div>
+    <div class="field" id="bowelNoteWrap" hidden>
+      <label for="bowelNote">軟硬、量多少</label>
+      <input id="bowelNote" placeholder="例：正常、偏硬、量少">
+    </div>
+    <div class="inner">
+      <h3>這一週</h3>
+      <div class="week" id="week"></div>
+      <div class="legend"><span><i style="background:var(--ok)"></i>有排便</span><span><i style="background:var(--warn-soft);border:2px solid var(--warn)"></i>沒有</span><span><i style="border:2px dashed var(--e)"></i>還沒記</span></div>
+    </div>
+    <p class="alertline" id="bowelAlert" hidden></p>
+  </section>
+
+  <!-- 4 meals -->
+  <section class="card meal" aria-labelledby="h-meal">
+    <div class="card-head">
+      <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18a9 9 0 0 1-18 0z"/><path d="M8 8c0-1.5 1-2 1-3.5M12 8c0-1.5 1-2 1-3.5M16 8c0-1.5 1-2 1-3.5"/></svg></div>
+      <div class="h"><h2 id="h-meal">吃飯喝水</h2><span class="hint">寫吃了什麼、吃了多少</span></div>
+    </div>
+    <ol class="steps">
+      <li><span class="num">1</span><span>點一下格子，<b>寫吃了什麼</b>、吃完還是剩一半</span></li>
+      <li><span class="num">2</span><span>寫完點旁邊空白處，<b>就自動存好了</b></span></li>
+    </ol>
+    <div class="inner">
+      <div class="field"><label for="m-pre">中午飯前吃什麼</label><input id="m-pre" placeholder="例：半根香蕉"></div>
+      <div class="field"><label for="m-b">早餐</label><input id="m-b" placeholder="例：稀飯一碗，吃完"></div>
+      <div class="field"><label for="m-l">午餐</label><input id="m-l" placeholder="例：飯半碗、魚、青菜"></div>
+      <div class="field"><label for="m-d">晚餐</label><input id="m-d"></div>
+    </div>
+    <div class="inner">
+      <div class="subhead"><h3>今天喝水</h3><span class="cupcount" id="cupCount"></span></div>
+      <ol class="steps">
+        <li><span class="num">1</span><span>媽媽<b>喝完一杯</b>（約一個馬克杯），就<b>點一個杯子</b></span></li>
+        <li><span class="num">2</span><span>點錯了？<b>點最後一個藍杯子</b>就退回一杯</span></li>
+      </ol>
+      <div class="cups" id="cups" role="group" aria-label="喝水杯數"></div>
+      <p class="empty" style="font-size:14px">目標：一天 6–8 杯（醫生另有交代就照醫生說的）</p>
+    </div>
+  </section>
+
+  <!-- body check -->
+  <section class="card body" aria-labelledby="h-body">
+    <div class="card-head">
+      <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2.5"/><path d="M12 8v7M8 11h8M9 21l3-6 3 6"/></svg></div>
+      <div class="h"><h2 id="h-body">身體檢查</h2><span class="hint">幫媽媽洗澡、換衣服時順便看</span></div>
+    </div>
+    <h3>今天有沒有跌倒或撞到</h3>
+    <div class="seg" id="fallSeg">
+      <button type="button" data-v="no" aria-pressed="false">沒有</button>
+      <button type="button" data-v="yes" aria-pressed="false">有跌倒／撞到</button>
+    </div>
+    <p class="alertline" id="fallAlert" hidden>有跌倒或撞到，請馬上通知家人。撞到頭、站不起來，先打 119。</p>
+    <h3>皮膚</h3>
+    <div class="seg" id="skinSeg">
+      <button type="button" data-v="ok" aria-pressed="false">正常</button>
+      <button type="button" data-v="bruise" aria-pressed="false">有瘀青</button>
+      <button type="button" data-v="red" aria-pressed="false">紅腫或破皮</button>
+    </div>
+    <div class="field" id="skinNoteWrap" hidden><label for="skinNote">在哪裡、多大</label><input id="skinNote" placeholder="例：右小腿一個銅板大瘀青"></div>
+    <div class="inner">
+      <div class="row">
+        <div class="field"><label for="temp">體溫（不舒服時量）</label><input id="temp" inputmode="decimal" placeholder="36.5"></div>
+        <div class="field"><label for="weight">體重（每週一次）</label><input id="weight" inputmode="decimal" placeholder="公斤"></div>
+      </div>
+      <p class="empty" id="weightHint"></p>
+    </div>
+  </section>
+
+  <!-- 5 reminders -->
+  <section class="card rem" aria-labelledby="h-rem">
+    <div class="card-head">
+      <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></div>
+      <div class="h"><h2 id="h-rem">今天的提醒</h2><span class="hint">做完就打勾</span></div>
+    </div>
+    <div class="inner" id="reminders"></div>
+    <div class="row">
+      <div class="field"><label for="remNew">加一個今天才有的提醒</label><input id="remNew" placeholder="例：下午三點回診"></div>
+      <button class="ghost" id="remAdd" type="button">加入</button>
+    </div>
+  </section>
+
+  <!-- 6 mood -->
+  <section class="card mood" aria-labelledby="h-mood">
+    <div class="card-head">
+      <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M8.5 14a4 4 0 0 0 7 0"/><path d="M9 9.5h.01M15 9.5h.01"/></svg></div>
+      <div class="h"><h2 id="h-mood">媽媽今天好嗎</h2><span class="hint">各選一個最接近的</span></div>
+    </div>
+    <h3>精神和心情</h3>
+    <div class="seg" id="moodSeg">
+      <button type="button" data-v="好" aria-pressed="false">開心穩定</button>
+      <button type="button" data-v="普通" aria-pressed="false">普通</button>
+      <button type="button" data-v="不安" aria-pressed="false">煩躁不安</button>
+      <button type="button" data-v="混亂" aria-pressed="false">比較糊塗</button>
+    </div>
+    <h3>昨晚睡覺</h3>
+    <div class="seg" id="sleepSeg">
+      <button type="button" data-v="好" aria-pressed="false">睡得好</button>
+      <button type="button" data-v="醒" aria-pressed="false">半夜醒來</button>
+      <button type="button" data-v="差" aria-pressed="false">睡不好</button>
+    </div>
+  </section>
+
+  <!-- 7 notes -->
+  <section class="card note" aria-labelledby="h-note">
+    <div class="card-head">
+      <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg></div>
+      <div class="h"><h2 id="h-note">和媽媽的相處小記</h2><span class="hint">聊了什麼、做了什麼、有什麼不一樣</span></div>
+    </div>
+    <div class="inner">
+      <div class="field"><label for="noteText">寫一則</label><textarea id="noteText" placeholder="例：下午陪媽媽在門口曬太陽，她說起以前的事，心情很好"></textarea></div>
+      <button class="big full" id="noteAdd" type="button">送出小記</button>
+    </div>
+    <div class="timeline" id="notes"></div>
+  </section>
+
+  <!-- 8 suggestions -->
+  <section class="card sug" aria-labelledby="h-sug">
+    <div class="card-head">
+      <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12h5"/></svg></div>
+      <div class="h"><h2 id="h-sug">姐妹們的建議</h2><span class="hint">覺得少了什麼、哪裡不好用，寫在這裡</span></div>
+    </div>
+    <ol class="steps">
+      <li><span class="num">1</span><span>寫下<b>想增加或修改的地方</b>，例如「要記媽媽的體重」</span></li>
+      <li><span class="num">2</span><span>按<b>「送出建議」</b>，曉雯會看到再調整</span></li>
+    </ol>
+    <div class="inner">
+      <div class="field"><label for="sugText">我的建議</label><textarea id="sugText" placeholder="例：營養品要分早晚、想加量體溫"></textarea></div>
+      <button class="big full" id="sugAdd" type="button">送出建議</button>
+    </div>
+    <div class="timeline" id="sugList"></div>
+  </section>
+
+  <!-- SOS -->
+  <section class="card sos" id="sos" aria-labelledby="h-sos">
+    <div class="card-head">
+      <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg></div>
+      <div class="h"><h2 id="h-sos">緊急聯絡人</h2><span class="hint">先打「先找她」那一位，找不到再打其他兩位</span></div>
+    </div>
+    <div class="c119">
+      <span>有生命危險，<b>先打 119</b></span>
+      <span style="font-size:15px">叫不醒、喘不過氣、突然講話不清楚、一邊手腳沒力、撞到頭</span>
+    </div>
+    <div class="inner" id="contacts"></div>
+    <div class="inner">
+      <h3>這些情況，要馬上告訴家人</h3>
+      <ul class="when" style="margin:0;padding-left:22px;display:flex;flex-direction:column;gap:4px">
+        <li>血壓上壓 180 以上，或下壓 110 以上</li>
+        <li>發燒 38 度以上</li>
+        <li>跌倒、撞到</li>
+        <li>一整天幾乎不吃不喝</li>
+        <li>連續 3 天沒有排便</li>
+        <li>突然比平常糊塗很多、不認得人、整晚吵鬧</li>
+        <li>藥吃錯、吃兩次或忘了吃</li>
+      </ul>
+    </div>
+  </section>
+
+  <details class="settings" id="settings">
+    <summary>設定：每天的藥、營養品、固定提醒</summary>
+    <p class="sub" style="margin-top:6px">這裡改了會套用到每一天。改完記得按最下面「儲存設定」。</p>
+    <div class="set-block"><h3>每天的藥</h3><div id="setMeds" class="set-block" style="margin:0"></div><button class="ghost" id="addMed" type="button" style="--k:var(--k-med)">加一個吃藥時段</button></div>
+    <div class="set-block"><h3>營養品</h3><div id="setSups" class="set-block" style="margin:0"></div><button class="ghost" id="addSup" type="button" style="--k:var(--k-med)">加一種營養品</button></div>
+    <div class="set-block"><h3>每天固定提醒</h3><div id="setRems" class="set-block" style="margin:0"></div><button class="ghost" id="addRem" type="button" style="--k:var(--k-rem)">加一個固定提醒</button></div>
+    <div class="set-block"><h3>緊急聯絡人（照順序）</h3><p class="sub">標示「先找她」的那一位會顯示在最上面。為了安全，網頁上不放電話。</p><div id="setContacts" class="set-block" style="margin:0"></div></div>
+    <button class="big full" id="saveCfg" type="button" style="--k:var(--accent);margin-top:18px">儲存設定</button>
+  </details>
+
+  <footer>血壓標示依一般標準：上壓 140 以上或 90 以下、下壓 90 以上會提醒。實際標準請依醫師交代。</footer>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+/* ---------- bilingual layer: Indonesian main line, Chinese small line under it ---------- */
+(function(){
+var ID={
+'媽媽的照顧日誌':'Catatan Perawatan Ibu',
+'看護和家人一起記，大家打開都看得到':'Diisi bersama oleh perawat dan keluarga, semua bisa melihat',
+'回今天':'Hari ini',
+'我是':'Saya',
+'看護':'Perawat',
+'家人':'Keluarga',
+'先選好，記錄會寫上你的名字':'Pilih dulu, catatan akan ditulis dengan nama Anda',
+'目前無法連線到共用紀錄，畫面上的資料不會存起來。':'Tidak bisa terhubung. Data di layar tidak akan tersimpan.',
+'有狀況，先打給':'Kalau ada masalah, telepon dulu',
+'看緊急聯絡人':'Lihat kontak darurat',
+'今天全部狀況（家人看這裡）':'Ringkasan hari ini (untuk keluarga)',
+'複製今天的摘要，貼到 LINE 群組':'Salin ringkasan hari ini, tempel ke grup LINE',
+'吃藥＋營養品':'Obat + suplemen',
+'血壓':'Tekanan darah',
+'提醒':'Pengingat',
+'還沒量':'Belum diukur',
+'有':'Ada',
+'沒有':'Tidak',
+'還沒記':'Belum dicatat',
+'吃藥和營養品':'Obat dan suplemen',
+'吃完按一下，自動記時間':'Setelah diminum, tekan sekali. Jam tercatat otomatis',
+'把藥或營養品拿給媽媽，看她吞下去':'Berikan obat atau suplemen kepada Ibu, pastikan Ibu menelannya',
+'按右邊的「吃了」，會自動記下幾點、誰給的':'Tekan tombol “Sudah minum” di kanan. Jam dan nama pemberi tercatat otomatis',
+'按錯了？再按一次就取消':'Salah tekan? Tekan sekali lagi untuk membatalkan',
+'藥':'Obat',
+'營養品':'Suplemen',
+'名稱在最下面「設定」新增':'Nama ditambahkan di “Pengaturan” paling bawah',
+'醫生改藥紀錄':'Catatan perubahan obat dari dokter',
+'回診後藥有變，一定要寫':'Kalau obat berubah setelah kontrol, wajib ditulis',
+'寫改了什麼，例如「血壓藥從一顆改半顆」':'Tulis apa yang berubah, misalnya “obat tensi dari 1 butir jadi setengah”',
+'寫哪家醫院、哪位醫生':'Tulis rumah sakit dan dokter mana',
+'按「記下改藥」，再到「設定」把藥名或時間改好':'Tekan “Catat perubahan obat”, lalu ubah nama atau jam obat di “Pengaturan”',
+'改了什麼':'Apa yang berubah',
+'哪家醫院、哪位醫生':'Rumah sakit dan dokter',
+'記下改藥':'Catat perubahan obat',
+'吃了':'Sudah minum',
+'已吃':'✓ Selesai',
+'早上的藥':'Obat pagi',
+'中午飯前的藥':'Obat sebelum makan siang',
+'晚上的藥':'Obat malam',
+'還沒設定藥，到最下面「設定」新增。':'Obat belum diatur. Tambahkan di “Pengaturan” paling bawah.',
+'還沒有營養品。打開最下面「設定」→「加一種營養品」，寫名字和時間（例：鈣片 早餐後）。':'Belum ada suplemen. Buka “Pengaturan” paling bawah, tambah suplemen, tulis nama dan jam.',
+'量血壓':'Ukur tekanan darah',
+'一天至少量一次':'Minimal sekali sehari',
+'讓媽媽坐好、休息 5 分鐘再量，手臂放在桌上':'Ibu duduk tenang dan istirahat 5 menit dulu, lengan diletakkan di meja',
+'量完看血壓計：最上面的大數字填「上壓」、中間填「下壓」、最下面填「心跳」':'Lihat alat tensi: angka besar paling atas isi di “Atas”, angka tengah di “Bawah”, angka paling bawah di “Nadi”',
+'按「記下這次血壓」，下面就會出現這筆紀錄':'Tekan “Catat tekanan darah”. Catatan akan muncul di bawah',
+'上壓':'Atas',
+'下壓':'Bawah',
+'心跳':'Nadi',
+'最上面的數字':'Angka paling atas',
+'中間的數字':'Angka tengah',
+'最下面的數字':'Angka paling bawah',
+'記下這次血壓':'Catat tekanan darah',
+'今天還沒有血壓紀錄':'Hari ini belum ada catatan tekanan darah',
+'偏高':'Tinggi',
+'偏低':'Rendah',
+'正常':'Normal',
+'排便':'BAB (buang air besar)',
+'每天都要記，有沒有都記':'Catat setiap hari, ada atau tidak ada',
+'按「今天有排便」或「今天沒有」':'Tekan “Hari ini BAB” atau “Hari ini tidak”',
+'有排便的話，簡單寫一下軟硬、量多少':'Kalau BAB, tulis singkat: lembek atau keras, banyak atau sedikit',
+'今天有排便':'Hari ini BAB',
+'今天沒有':'Hari ini tidak',
+'軟硬、量多少':'Lembek/keras, banyak/sedikit',
+'這一週':'Minggu ini',
+'有排便':'Ada BAB',
+'吃飯喝水':'Makan dan minum',
+'寫吃了什麼、吃了多少':'Tulis makan apa dan berapa banyak',
+'點一下格子，寫吃了什麼、吃完還是剩一半':'Ketuk kotak, tulis makan apa, habis atau sisa setengah',
+'寫完點旁邊空白處，就自動存好了':'Selesai menulis, ketuk di luar kotak. Tersimpan otomatis',
+'中午飯前吃什麼':'Makanan sebelum makan siang',
+'早餐':'Sarapan',
+'午餐':'Makan siang',
+'晚餐':'Makan malam',
+'今天喝水':'Minum air hari ini',
+'媽媽喝完一杯（約一個馬克杯），就點一個杯子':'Setiap Ibu habis minum 1 gelas (kira-kira 1 mug), ketuk 1 gelas',
+'點錯了？點最後一個藍杯子就退回一杯':'Salah ketuk? Ketuk gelas terisi yang terakhir untuk mengurangi 1',
+'目標：一天 6–8 杯（醫生另有交代就照醫生說的）':'Target: 6–8 gelas sehari (ikuti pesan dokter kalau berbeda)',
+'身體檢查':'Periksa badan',
+'幫媽媽洗澡、換衣服時順便看':'Periksa saat memandikan atau mengganti baju Ibu',
+'今天有沒有跌倒或撞到':'Hari ini ada jatuh atau terbentur?',
+'有跌倒／撞到':'Ada jatuh / terbentur',
+'有跌倒或撞到，請馬上通知家人。撞到頭、站不起來，先打 119。':'Ada jatuh atau terbentur: segera beri tahu keluarga. Kalau kepala terbentur atau tidak bisa berdiri, telepon 119 dulu.',
+'皮膚':'Kulit',
+'有瘀青':'Ada memar',
+'紅腫或破皮':'Merah bengkak atau luka',
+'在哪裡、多大':'Di mana, seberapa besar',
+'體溫（不舒服時量）':'Suhu badan (ukur kalau tidak enak badan)',
+'體重（每週一次）':'Berat badan (seminggu sekali)',
+'還沒有體重紀錄':'Belum ada catatan berat badan',
+'今天的提醒':'Pengingat hari ini',
+'做完就打勾':'Centang kalau sudah selesai',
+'今天沒有提醒':'Hari ini tidak ada pengingat',
+'加一個今天才有的提醒':'Tambah pengingat khusus hari ini',
+'加入':'Tambah',
+'飯後陪走動十分鐘':'Temani Ibu jalan 10 menit setelah makan',
+'媽媽今天好嗎':'Bagaimana Ibu hari ini?',
+'各選一個最接近的':'Pilih satu yang paling sesuai',
+'精神和心情':'Semangat dan suasana hati',
+'開心穩定':'Senang dan tenang',
+'普通':'Biasa',
+'煩躁不安':'Gelisah',
+'比較糊塗':'Agak bingung',
+'昨晚睡覺':'Tidur tadi malam',
+'睡得好':'Tidur nyenyak',
+'半夜醒來':'Terbangun tengah malam',
+'睡不好':'Susah tidur',
+'和媽媽的相處小記':'Catatan kecil bersama Ibu',
+'聊了什麼、做了什麼、有什麼不一樣':'Ngobrol apa, melakukan apa, ada yang berbeda?',
+'寫一則':'Tulis catatan',
+'送出小記':'Kirim catatan',
+'還沒有小記。陪媽媽聊天、散步、她說了什麼，都可以寫。':'Belum ada catatan. Ngobrol, jalan-jalan, apa yang Ibu katakan, semua boleh ditulis.',
+'緊急聯絡人':'Kontak darurat',
+'先打「先找她」那一位，找不到再打其他兩位':'Telepon dulu yang bertanda “Hubungi dulu”. Kalau tidak diangkat, telepon dua lainnya',
+'有生命危險，先打 119':'Bahaya nyawa: telepon 119 dulu',
+'叫不醒、喘不過氣、突然講話不清楚、一邊手腳沒力、撞到頭':'Tidak bisa dibangunkan, sesak napas, tiba-tiba bicara tidak jelas, tangan atau kaki satu sisi lemas, kepala terbentur',
+'這些情況，要馬上告訴家人':'Kondisi ini harus segera diberitahukan ke keluarga',
+'血壓上壓 180 以上，或下壓 110 以上':'Tekanan darah atas 180 ke atas, atau bawah 110 ke atas',
+'發燒 38 度以上':'Demam 38°C ke atas',
+'跌倒、撞到':'Jatuh atau terbentur',
+'一整天幾乎不吃不喝':'Seharian hampir tidak makan dan minum',
+'連續 3 天沒有排便':'3 hari berturut-turut tidak BAB',
+'突然比平常糊塗很多、不認得人、整晚吵鬧':'Tiba-tiba jauh lebih bingung, tidak mengenali orang, ribut sepanjang malam',
+'藥吃錯、吃兩次或忘了吃':'Salah obat, minum dua kali, atau lupa minum',
+'電話：看手機通訊錄，或家裡貼的聯絡卡':'Telepon: lihat kontak di HP, atau kartu kontak yang ditempel di rumah',
+'如果用 LINE 找不到人，記得打手機':'Kalau lewat LINE tidak dijawab, telepon ke nomor HP',
+'先找她':'Hubungi dulu',
+'在台中':'Di Taichung',
+'在台北，常出差到美國、日本':'Di Taipei, sering dinas ke Amerika dan Jepang',
+'在高雄，離媽媽最近，有狀況請先找她':'Di Kaohsiung, paling dekat dengan Ibu. Kalau ada masalah, hubungi dia dulu',
+'血壓標示依一般標準：上壓 140 以上或 90 以下、下壓 90 以上會提醒。實際標準請依醫師交代。':'Tanda tekanan darah memakai standar umum: atas 140 ke atas atau di bawah 90, bawah 90 ke atas akan diberi tanda. Ikuti pesan dokter.',
+'已取消':'Dibatalkan',
+'血壓記好了':'Tekanan darah tercatat',
+'請先填「上壓」（最上面的數字）':'Isi dulu “Atas” (angka paling atas)',
+'請填「下壓」（中間的數字）':'Isi “Bawah” (angka tengah)',
+'已存':'Tersimpan',
+'先寫要提醒什麼':'Tulis dulu isi pengingat',
+'先寫一點內容':'Tulis dulu isinya',
+'小記送出了':'Catatan terkirim',
+'體溫已存':'Suhu badan tersimpan',
+'體重已存':'Berat badan tersimpan',
+'先寫改了什麼':'Tulis dulu apa yang berubah',
+'改藥已記下，記得去設定改藥':'Perubahan obat tercatat. Jangan lupa ubah di Pengaturan',
+'沒有存成功，請再按一次':'Gagal tersimpan, tekan sekali lagi',
+'已複製，打開 LINE 貼上就好':'Sudah disalin. Buka LINE lalu tempel',
+'請長按上面文字複製':'Tekan lama teks di atas untuk menyalin'
+};
+var PH={
+'例：晚上的藥多一顆胃藥':'Contoh: obat malam tambah 1 obat maag',
+'例：高醫 王醫師':'Contoh: RS Kaohsiung, dr. Wang',
+'例：正常、偏硬、量少':'Contoh: normal, agak keras, sedikit',
+'例：半根香蕉':'Contoh: setengah pisang',
+'例：稀飯一碗，吃完':'Contoh: bubur 1 mangkuk, habis',
+'例：飯半碗、魚、青菜':'Contoh: nasi setengah mangkuk, ikan, sayur',
+'例：右小腿一個銅板大瘀青':'Contoh: memar sebesar koin di betis kanan',
+'公斤':'kg',
+'例：下午三點回診':'Contoh: kontrol dokter jam 3 sore',
+'例：下午陪媽媽在門口曬太陽，她說起以前的事，心情很好':'Contoh: sore menemani Ibu berjemur di depan pintu, Ibu cerita masa lalu, senang'
+};
+var HARI={'日':'Minggu','一':'Senin','二':'Selasa','三':'Rabu','四':'Kamis','五':'Jumat','六':'Sabtu'};
+var BLN=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+function has(o,k){return Object.prototype.hasOwnProperty.call(o,k)}
+var RX=[
+[/^(今天 )?(\d+)\/(\d+)（(.)）$/,function(m){return (m[1]?'Hari ini, ':'')+(HARI[m[4]]||'')+' '+m[3]+' '+(BLN[m[2]-1]||'')}],
+[/^預定 (.+)$/,function(m){return 'Jadwal '+(m[1]==='未設定時間'?'belum diatur':m[1])}],
+[/^✓ (\d\d:\d\d) 吃了/,function(m){return '✓ Diminum jam '+m[1]}],
+[/^已經連續 (\d+) 天沒有排便，請在群組告訴家人$/,function(m){return 'Sudah '+m[1]+' hari berturut-turut belum BAB. Tolong beri tahu keluarga di grup.'}],
+[/^(\d+) 杯$/,function(m){return m[1]+' gelas'}],
+[/^上次量體重：(.+) (\S+) 公斤$/,function(m){return 'Timbang terakhir: '+m[2]+' kg'}],
+[/^記下了：「(.+)」$/,function(m){return 'Tercatat: '+(has(ID,m[1])?ID[m[1]]:m[1])}],
+[/^(.+)（今天）$/,function(m){return (has(ID,m[1])?ID[m[1]]:m[1])+' (hari ini)'}]
+];
+function tr(s){if(has(ID,s))return ID[s];for(var i=0;i<RX.length;i++){var m=s.match(RX[i][0]);if(m)return RX[i][1](m)}return null}
+function norm(s){return s.replace(/\s+/g,' ').trim()}
+function pair(id,zh){var s=document.createElement('span');s.className='i18n';s.appendChild(document.createTextNode(id));var z=document.createElement('small');z.className='zh';z.textContent=zh;s.appendChild(z);return s}
+var SKIP=/^(SCRIPT|STYLE|TITLE|SELECT|SMALL|B|I|BR)$/;
+function apply(){
+  var els=document.body.querySelectorAll('*');
+  for(var i=0;i<els.length;i++){
+    var e=els[i];
+    if(!e.isConnected||e.namespaceURI!=='http://www.w3.org/1999/xhtml')continue;
+    if(e.closest('#settings,.sug,#overview'))continue;
+    var tag=e.tagName;
+    if(tag==='INPUT'||tag==='TEXTAREA'){var p=e.getAttribute('placeholder');if(p&&has(PH,p))e.setAttribute('placeholder',PH[p]);continue}
+    if(tag==='OPTION'){var o=norm(e.textContent);if(has(ID,o)){e.value=o;e.textContent=ID[o]+'｜'+o}continue}
+    if(SKIP.test(tag)||e.classList.contains('zh')||e.classList.contains('i18n'))continue;
+    var kids=e.children,simple=true;
+    for(var k=0;k<kids.length;k++){if(kids[k].tagName!=='B')simple=false}
+    if(simple){var key=norm(e.textContent);if(!key)continue;var t=tr(key);if(t!=null){e.textContent='';e.appendChild(pair(t,key))}continue}
+    var n=e.firstChild,nx;
+    while(n){nx=n.nextSibling;
+      if(n.nodeType===3){var key2=norm(n.nodeValue);if(key2){var t2=tr(key2);if(t2!=null)e.replaceChild(pair(t2,key2),n)}}
+      n=nx}
+  }
+}
+var mo=new MutationObserver(function(){run()});
+function run(){mo.disconnect();try{apply()}catch(err){}mo.observe(document.body,{childList:true,subtree:true,characterData:true})}
+run();
+})();
+</script>
+
+<script>
+/* ---------- the diary ---------- */
+(function(){
+  /* Address of the family's Google Apps Script web app. Empty = nothing is saved. */
+  var API="";
+
+  var DEFAULT_CFG = {
+    meds:[{id:"am",label:"早上的藥",time:"08:00"},{id:"noon",label:"中午飯前的藥",time:"11:30"},{id:"pm",label:"晚上的藥",time:"19:00"}],
+    sups:[],
+    reminders:["量血壓","飯後陪走動十分鐘"],
+    contacts:[
+      {name:"大姐 許瓊瑛",rel:"大女兒",where:"在台中",tip:""},
+      {name:"二姐 許芝蘭",rel:"二女兒",where:"在台北，常出差到美國、日本",tip:""},
+      {name:"曉雯姐姐 許曉雯",rel:"三女兒",where:"在高雄，離媽媽最近，有狀況請先找她",tip:"如果用 LINE 找不到人，記得打手機",first:true}
+    ]
+  };
+  var WD=["日","一","二","三","四","五","六"];
+  var MOOD={"好":"開心穩定","普通":"普通","不安":"煩躁不安","混亂":"比較糊塗"}, SLEEP={"好":"睡得好","醒":"半夜醒來","差":"睡不好"};
+  var MEALS=[["m-pre","pre"],["m-b","b"],["m-l","l"],["m-d","d"]];
+  var SKIN={ok:"正常",bruise:"有瘀青",red:"紅腫或破皮"};
+  var state={date:todayStr(),days:{},cfg:clone(DEFAULT_CFG),who:"看護",sugs:[],chgs:[]};
+  var $=function(id){return document.getElementById(id)};
+  function clone(o){return JSON.parse(JSON.stringify(o))}
+
+  try{var w=localStorage.getItem("care-who"); if(w) state.who=w;}catch(e){}
+  $("whoSel").value=state.who;
+  if($("whoSel").selectedIndex<0){$("whoSel").selectedIndex=0;state.who=$("whoSel").value}
+  $("whoSel").addEventListener("change",function(){state.who=this.value;try{localStorage.setItem("care-who",state.who)}catch(e){}});
+
+  function pad(n){return (n<10?"0":"")+n}
+  function todayStr(){var d=new Date();return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())}
+  function nowHM(){var d=new Date();return pad(d.getHours())+":"+pad(d.getMinutes())}
+  function shift(s,n){var p=s.split("-");var d=new Date(+p[0],+p[1]-1,+p[2]+n);return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())}
+  function label(s){var p=s.split("-");var d=new Date(+p[0],+p[1]-1,+p[2]);return (+p[1])+"/"+(+p[2])+"（"+WD[d.getDay()]+"）"}
+  function day(){return state.days[state.date]||{date:state.date}}
+  function toast(t){var el=$("toast");el.textContent=t;el.hidden=false;clearTimeout(toast._t);toast._t=setTimeout(function(){el.hidden=true},2200)}
+  function el(tag,a,kids){var e=document.createElement(tag);if(a)for(var k in a){if(k==="text")e.textContent=a[k];else if(k==="cls")e.className=a[k];else e.setAttribute(k,a[k])}(kids||[]).forEach(function(c){if(c)e.appendChild(c)});return e}
+
+  /* ---- shared store: one Google Sheet behind an Apps Script web app ---- */
+  var pending=0, lastSnap="";
+  function post(body){
+    if(!API) return;
+    pending++;
+    fetch(API,{method:"POST",body:JSON.stringify(body)})
+      .then(function(r){return r.json()})
+      .then(function(j){if(!j||!j.ok) throw new Error("save")})
+      .catch(function(){toast("沒有存成功，請再按一次")})
+      .then(function(){pending--; if(pending===0) setTimeout(load,1500)});
+  }
+  function load(){
+    if(!API){$("offline").hidden=false;return}
+    if(pending>0) return;
+    fetch(API+"?action=all&t="+Date.now())
+      .then(function(r){return r.json()})
+      .then(function(j){
+        $("offline").hidden=true;
+        if(pending>0||!j||!j.ok) return;
+        var snap=JSON.stringify(j);
+        if(snap===lastSnap) return;
+        lastSnap=snap;
+        state.days=j.days||{};
+        state.sugs=j.sugs||[];
+        state.chgs=j.chgs||[];
+        if(j.cfg){
+          var c=j.cfg;
+          state.cfg={meds:c.meds||clone(DEFAULT_CFG.meds),sups:c.sups||[],reminders:c.reminders||[],contacts:c.contacts||clone(DEFAULT_CFG.contacts)};
+          if(!$("settings").open){draft=null;renderSettings()}
+        }
+        render();
+      })
+      .catch(function(){$("offline").hidden=false});
+  }
+
+  function save(patch){
+    var d=Object.assign({},day(),patch,{date:state.date});
+    state.days[state.date]=d; render();
+    post({action:"saveDay",date:state.date,patch:patch,summary:summary()});
+  }
+  function bpFlag(r){if(r.sys>=140||r.dia>=90)return["alert","偏高"];if(r.sys<90)return["warn","偏低"];return["ok","正常"]}
+
+  function tickRow(item, recs, field){
+    var rec=recs[item.id]||{};
+    var meta=rec.done?("✓ "+rec.at+" 吃了"+(rec.by?"・"+rec.by:"")):("預定 "+(item.time||"未設定時間"));
+    var b=el("button",{cls:"tick"+(rec.done?" done":""),type:"button","aria-pressed":rec.done?"true":"false",text:rec.done?"已吃":"吃了"});
+    b.addEventListener("click",function(){
+      var next=Object.assign({},recs); next[item.id]=rec.done?{done:false}:{done:true,at:nowHM(),by:state.who};
+      var p={}; p[field]=next; save(p); toast(rec.done?"已取消":"記下了：「"+item.label+"」");
+    });
+    return el("div",{cls:"med-item"},[el("div",{cls:"info"},[el("p",{cls:"name",text:item.label}),el("p",{cls:"meta",text:meta})]),b]);
+  }
+
+  function render(){
+    var d=day(), cfg=state.cfg;
+    $("dayLabel").textContent=(state.date===todayStr()?"今天 ":"")+label(state.date);
+    $("nextDay").disabled=state.date>=todayStr();
+
+    var meds=d.meds||{}, sups=d.sups||{};
+    var doneMeds=cfg.meds.filter(function(m){return meds[m.id]&&meds[m.id].done}).length;
+    var doneSups=cfg.sups.filter(function(m){return sups[m.id]&&sups[m.id].done}).length;
+    var tot=cfg.meds.length+cfg.sups.length, done=doneMeds+doneSups;
+    var bp=d.bp||[], rems=allRem(d), remDone=rems.filter(function(r){return r.done}).length;
+    var last=bp[bp.length-1];
+    var chips=[
+      ["吃藥＋營養品",done+" / "+tot,tot&&done===tot?"ok":(done?"warn":"")],
+      ["血壓",last?last.sys+"/"+last.dia:"還沒量",last?bpFlag(last)[0]:""],
+      ["排便",d.bowel==="yes"?"有":(d.bowel==="no"?"沒有":"還沒記"),d.bowel==="yes"?"ok":(d.bowel==="no"?"warn":"")],
+      ["提醒",remDone+" / "+rems.length,rems.length&&remDone===rems.length?"ok":""]
+    ];
+    var st=$("status");st.textContent="";
+    chips.forEach(function(c){st.appendChild(el("div",{cls:"chip "+c[2]},[el("span",{cls:"k",text:c[0]}),el("span",{cls:"v",text:c[1]})]))});
+
+    var mw=$("meds");mw.textContent="";
+    if(!cfg.meds.length) mw.appendChild(el("p",{cls:"empty",text:"還沒設定藥，到最下面「設定」新增。"}));
+    cfg.meds.forEach(function(m){mw.appendChild(tickRow(m,meds,"meds"))});
+    var sw=$("sups");sw.textContent="";
+    if(!cfg.sups.length) sw.appendChild(el("p",{cls:"empty",text:"還沒有營養品。打開最下面「設定」→「加一種營養品」，寫名字和時間（例：鈣片 早餐後）。"}));
+    cfg.sups.forEach(function(m){sw.appendChild(tickRow(m,sups,"sups"))});
+
+    var bl=$("bpList");bl.textContent="";
+    if(!bp.length) bl.appendChild(el("p",{cls:"empty",text:"今天還沒有血壓紀錄"}));
+    bp.forEach(function(r,i){
+      var f=bpFlag(r),x=el("button",{cls:"x",type:"button","aria-label":"刪除這筆",text:"×"});
+      x.addEventListener("click",function(){var nb=bp.slice();nb.splice(i,1);save({bp:nb})});
+      bl.appendChild(el("div",{cls:"reading"},[el("span",{cls:"t",text:r.at+(r.by?"・"+r.by:"")}),el("span",{cls:"n",text:r.sys+" / "+r.dia+(r.pulse?"　心跳 "+r.pulse:"")}),el("span",{cls:"flag "+f[0],text:f[1]}),x]));
+    });
+
+    Array.prototype.forEach.call($("bowelSeg").children,function(b){b.setAttribute("aria-pressed",d.bowel===b.dataset.v?"true":"false")});
+    $("bowelNoteWrap").hidden=d.bowel!=="yes";
+    if(document.activeElement!==$("bowelNote")) $("bowelNote").value=d.bowelNote||"";
+    var wk=$("week");wk.textContent="";
+    for(var i=6;i>=0;i--){var ds=shift(state.date,-i),dd=state.days[ds]||{},p=ds.split("-");
+      wk.appendChild(el("div",{cls:"d"},[el("span",{cls:"dot "+(dd.bowel||""),title:dd.bowel==="yes"?"有":dd.bowel==="no"?"沒有":"還沒記"}),el("span",{text:(+p[1])+"/"+(+p[2])})]))}
+    var streak=0;for(var j=0;j<7;j++){if((state.days[shift(state.date,-j)]||{}).bowel==="no")streak++;else break}
+    $("bowelAlert").hidden=streak<3;
+    $("bowelAlert").textContent="已經連續 "+streak+" 天沒有排便，請在群組告訴家人";
+
+    var meal=d.meal||{};
+    MEALS.forEach(function(p){if(document.activeElement!==$(p[0]))$(p[0]).value=meal[p[1]]||""});
+
+    var rw=$("reminders");rw.textContent="";
+    if(!rems.length) rw.appendChild(el("p",{cls:"empty",text:"今天沒有提醒"}));
+    rems.forEach(function(r,i){
+      var id="rem-"+i,cb=el("input",{type:"checkbox",id:id});cb.checked=!!r.done;
+      cb.addEventListener("change",function(){
+        if(r.extra){var ex=(d.extra||[]).slice();ex[r.idx]=Object.assign({},ex[r.idx],{done:cb.checked});save({extra:ex})}
+        else{var rd=Object.assign({},d.remDone||{});rd[r.text]=cb.checked;save({remDone:rd})}
+      });
+      rw.appendChild(el("div",{cls:"check"+(r.done?" done":"")},[cb,el("label",{for:id,text:r.text+(r.extra?"（今天）":"")})]));
+    });
+
+    Array.prototype.forEach.call($("moodSeg").children,function(b){b.setAttribute("aria-pressed",d.mood===b.dataset.v?"true":"false")});
+    Array.prototype.forEach.call($("sleepSeg").children,function(b){b.setAttribute("aria-pressed",d.sleep===b.dataset.v?"true":"false")});
+
+    var nw=$("notes");nw.textContent="";var notes=(d.notes||[]).slice().reverse();
+    if(!notes.length) nw.appendChild(el("p",{cls:"empty",text:"還沒有小記。陪媽媽聊天、散步、她說了什麼，都可以寫。"}));
+    notes.forEach(function(n){nw.appendChild(el("div",{cls:"tl"},[el("span",{cls:"t",text:n.at}),el("div",{cls:"body"},[el("p",{text:n.text}),el("span",{cls:"by",text:n.by||""})])]))});
+
+    var sl=$("sugList");sl.textContent="";
+    if(!state.sugs.length) sl.appendChild(el("p",{cls:"empty",text:"還沒有建議。"}));
+    state.sugs.forEach(function(s){var p=(s.date||"").split("-");sl.appendChild(el("div",{cls:"tl"},[el("span",{cls:"t",text:p.length===3?(+p[1])+"/"+(+p[2]):""}),el("div",{cls:"body"},[el("p",{text:s.text}),el("span",{cls:"by",text:s.by||""})])]))});
+    renderExtra(d);
+    $("overview").textContent=summary().split("\n").slice(1).join("\n");
+  }
+
+  function renderExtra(d){
+    var cs=state.cfg.contacts||[], first=cs.filter(function(c){return c.first})[0]||cs[0];
+    $("firstCall").textContent=first?(first.name+"（"+first.rel+"）"):"家人";
+    var cw=$("contacts");cw.textContent="";
+    cs.forEach(function(c,i){
+      var nm=el("p",{cls:"nm",text:c.name+"・"+c.rel});
+      var kids=[nm,el("p",{cls:"where",text:c.where||""}),el("p",{cls:"where",text:"電話：看手機通訊錄，或家裡貼的聯絡卡"})];
+      if(c.tip) kids.push(el("p",{cls:"tip",text:c.tip}));
+      if(c===first){nm.appendChild(el("span",{cls:"first-badge",text:"先找她"}))}
+      cw.appendChild(el("div",{cls:"contact"},[el("span",{cls:"order",text:String(i+1)}),el("div",{cls:"info"},kids)]));
+    });
+    // cups
+    var n=d.cups||0, cw2=$("cups");cw2.textContent="";
+    for(var i=1;i<=8;i++){(function(k){
+      var b=el("button",{cls:"cup"+(k<=n?" full":""),type:"button","aria-label":"第"+k+"杯"+(k<=n?"，已喝":"")});
+      b.onclick=function(){var cur=day().cups||0;save({cups:k===cur?k-1:k});};
+      cw2.appendChild(b);})(i)}
+    $("cupCount").textContent=n+" 杯";
+    // body
+    Array.prototype.forEach.call($("fallSeg").children,function(b){b.setAttribute("aria-pressed",d.fall===b.dataset.v?"true":"false")});
+    $("fallAlert").hidden=d.fall!=="yes";
+    Array.prototype.forEach.call($("skinSeg").children,function(b){b.setAttribute("aria-pressed",d.skin===b.dataset.v?"true":"false")});
+    $("skinNoteWrap").hidden=!(d.skin==="bruise"||d.skin==="red");
+    if(document.activeElement!==$("skinNote"))$("skinNote").value=d.skinNote||"";
+    if(document.activeElement!==$("temp"))$("temp").value=d.temp||"";
+    if(document.activeElement!==$("weight"))$("weight").value=d.weight||"";
+    var lastW=null;Object.keys(state.days).sort().reverse().some(function(k){if(k<=state.date&&state.days[k].weight){lastW=[k,state.days[k].weight];return true}});
+    $("weightHint").textContent=lastW?("上次量體重："+label(lastW[0])+" "+lastW[1]+" 公斤"):"還沒有體重紀錄";
+    // med changes
+    var cl=$("chgList");cl.textContent="";
+    state.chgs.slice(0,5).forEach(function(c){cl.appendChild(el("div",{cls:"chg"},[el("span",{cls:"d",text:label(c.date)+"・"+(c.doc||"")+"・"+(c.by||"")}),el("span",{text:c.what})]))});
+  }
+  function allRem(d){var rd=d.remDone||{};return state.cfg.reminders.map(function(t){return{text:t,done:!!rd[t]}}).concat((d.extra||[]).map(function(x,i){return{text:x.text,done:!!x.done,extra:true,idx:i}}))}
+
+  function summary(){
+    var d=day(),cfg=state.cfg,L=[];
+    L.push("【媽媽的照顧日誌】"+label(state.date));
+    var meds=d.meds||{},sups=d.sups||{};
+    var mline=cfg.meds.map(function(m){var r=meds[m.id];return m.label+(r&&r.done?" ✓"+r.at:" ✗未吃")});
+    if(mline.length)L.push("吃藥："+mline.join("、"));
+    var sline=cfg.sups.map(function(m){var r=sups[m.id];return m.label+(r&&r.done?" ✓":" ✗")});
+    if(sline.length)L.push("營養品："+sline.join("、"));
+    var bp=d.bp||[];L.push("血壓："+(bp.length?bp.map(function(r){return r.at+" "+r.sys+"/"+r.dia+(r.pulse?" 心跳"+r.pulse:"")+"（"+bpFlag(r)[1]+"）"}).join("；"):"還沒量"));
+    L.push("排便："+(d.bowel==="yes"?"有"+(d.bowelNote?"（"+d.bowelNote+"）":""):d.bowel==="no"?"沒有":"還沒記"));
+    var meal=d.meal||{};var ml=[["早餐","b"],["飯前","pre"],["午餐","l"],["晚餐","d"]].filter(function(x){return meal[x[1]]}).map(function(x){return x[0]+"："+meal[x[1]]});
+    if(ml.length)L.push(ml.join("｜"));
+    L.push("喝水："+(d.cups||0)+" 杯");
+    var bd=[];if(d.fall==="yes")bd.push("⚠ 有跌倒／撞到");if(d.skin&&d.skin!=="ok")bd.push("皮膚"+SKIN[d.skin]+(d.skinNote?"（"+d.skinNote+"）":""));if(d.temp)bd.push("體溫 "+d.temp);if(d.weight)bd.push("體重 "+d.weight+" 公斤");
+    if(bd.length)L.push("身體："+bd.join("、"));
+    if(d.mood||d.sleep)L.push("狀態："+[d.mood?"心情"+MOOD[d.mood]:"",d.sleep?"睡眠"+SLEEP[d.sleep]:""].filter(Boolean).join("、"));
+    var undone=allRem(d).filter(function(r){return!r.done}).map(function(r){return r.text});
+    if(undone.length)L.push("還沒做的提醒："+undone.join("、"));
+    (d.notes||[]).forEach(function(n){L.push("小記 "+n.at+"："+n.text+(n.by?"（"+n.by+"）":""))});
+    return L.join("\n");
+  }
+
+  $("copySum").onclick=function(){
+    var t=summary(),box=$("sumBox");box.value=t;
+    var fall=function(){box.hidden=false;box.focus();box.select();toast("請長按上面文字複製")};
+    try{navigator.clipboard.writeText(t).then(function(){box.hidden=false;toast("已複製，打開 LINE 貼上就好")},fall)}catch(e){fall()}
+  };
+  $("prevDay").onclick=function(){state.date=shift(state.date,-1);$("sumBox").hidden=true;render()};
+  $("nextDay").onclick=function(){if(state.date<todayStr()){state.date=shift(state.date,1);$("sumBox").hidden=true;render()}};
+  $("goToday").onclick=function(){state.date=todayStr();$("sumBox").hidden=true;render()};
+  $("bpAdd").onclick=function(){
+    var s=parseInt($("sys").value,10),di=parseInt($("dia").value,10),pu=parseInt($("pulse").value,10);
+    if(!(s>40&&s<260)){toast("請先填「上壓」（最上面的數字）");$("sys").focus();return}
+    if(!(di>20&&di<180)){toast("請填「下壓」（中間的數字）");$("dia").focus();return}
+    var r={at:nowHM(),sys:s,dia:di,by:state.who};if(pu>20&&pu<220)r.pulse=pu;
+    save({bp:(day().bp||[]).concat([r])});$("sys").value=$("dia").value=$("pulse").value="";toast("血壓記好了");
+  };
+  Array.prototype.forEach.call($("bowelSeg").children,function(b){b.onclick=function(){save({bowel:day().bowel===b.dataset.v?"":b.dataset.v})}});
+  $("bowelNote").addEventListener("change",function(){save({bowelNote:this.value.trim()});toast("已存")});
+  MEALS.forEach(function(p){$(p[0]).addEventListener("change",function(){var m=Object.assign({},day().meal||{});m[p[1]]=this.value.trim();save({meal:m});toast("已存")})});
+  $("remAdd").onclick=function(){var t=$("remNew").value.trim();if(!t){toast("先寫要提醒什麼");return}save({extra:(day().extra||[]).concat([{text:t,done:false}])});$("remNew").value=""};
+  Array.prototype.forEach.call($("moodSeg").children,function(b){b.onclick=function(){save({mood:day().mood===b.dataset.v?"":b.dataset.v})}});
+  Array.prototype.forEach.call($("sleepSeg").children,function(b){b.onclick=function(){save({sleep:day().sleep===b.dataset.v?"":b.dataset.v})}});
+  $("noteAdd").onclick=function(){var t=$("noteText").value.trim();if(!t){toast("先寫一點內容");return}save({notes:(day().notes||[]).concat([{at:nowHM(),by:state.who,text:t}])});$("noteText").value="";toast("小記送出了")};
+  $("sugAdd").onclick=function(){
+    var t=$("sugText").value.trim();if(!t){toast("先寫建議內容");return}
+    var s={text:t,by:state.who,date:todayStr(),ts:Date.now()};
+    state.sugs=[s].concat(state.sugs);render();$("sugText").value="";toast("謝謝，建議送出了");
+    post({action:"addSug",item:s});
+  };
+
+  Array.prototype.forEach.call($("fallSeg").children,function(b){b.onclick=function(){save({fall:day().fall===b.dataset.v?"":b.dataset.v})}});
+  Array.prototype.forEach.call($("skinSeg").children,function(b){b.onclick=function(){save({skin:day().skin===b.dataset.v?"":b.dataset.v})}});
+  $("skinNote").addEventListener("change",function(){save({skinNote:this.value.trim()});toast("已存")});
+  $("temp").addEventListener("change",function(){save({temp:this.value.trim()});toast("體溫已存")});
+  $("weight").addEventListener("change",function(){save({weight:this.value.trim()});toast("體重已存")});
+  $("chgAdd").onclick=function(){
+    var w=$("chgWhat").value.trim();if(!w){toast("先寫改了什麼");$("chgWhat").focus();return}
+    var c={what:w,doc:$("chgDoc").value.trim(),by:state.who,date:todayStr(),ts:Date.now()};
+    state.chgs=[c].concat(state.chgs);render();$("chgWhat").value=$("chgDoc").value="";toast("改藥已記下，記得去設定改藥");
+    post({action:"addChg",item:c});
+  };
+
+  // settings
+  var draft=null;
+  function setRow(list,i,withTime,nameLabel){
+    var it=list[i];
+    var a=el("input",{"aria-label":nameLabel,placeholder:nameLabel});a.value=withTime?it.label:it;
+    a.oninput=function(){if(withTime)it.label=a.value;else list[i]=a.value};
+    var x=el("button",{cls:"x",type:"button","aria-label":"刪除",text:"×"});x.onclick=function(){list.splice(i,1);renderSettings()};
+    if(!withTime)return el("div",{cls:"set-row single"},[a,x]);
+    var t=el("input",{"aria-label":"時間",type:"time"});t.value=it.time||"";t.oninput=function(){it.time=t.value};
+    return el("div",{cls:"set-row"},[a,t,x]);
+  }
+  function renderSettings(){
+    draft=draft||clone(state.cfg);
+    var sm=$("setMeds");sm.textContent="";draft.meds.forEach(function(_,i){sm.appendChild(setRow(draft.meds,i,true,"藥的名稱"))});
+    var ss=$("setSups");ss.textContent="";draft.sups.forEach(function(_,i){ss.appendChild(setRow(draft.sups,i,true,"營養品名稱"))});
+    var sr=$("setRems");sr.textContent="";draft.reminders.forEach(function(_,i){sr.appendChild(setRow(draft.reminders,i,false,"提醒內容"))});
+    var sc=$("setContacts");sc.textContent="";
+    (draft.contacts||[]).forEach(function(c,i){
+      var box=el("div",{cls:"inner",style:"gap:8px"});
+      box.appendChild(el("p",{style:"font-weight:900",text:(i+1)+". "+c.rel}));
+      [["name","名字"],["where","在哪裡"],["tip","提醒（可空白）"]].forEach(function(f){
+        var inp=el("input",{"aria-label":c.rel+f[1],placeholder:f[1],style:"min-height:46px;border:2px solid var(--line);border-radius:12px;background:var(--bg);padding:6px 10px;width:100%;font-size:16px"});
+        inp.value=c[f[0]]||"";inp.oninput=function(){c[f[0]]=inp.value};box.appendChild(inp);
+      });
+      sc.appendChild(box);
+    });
+  }
+  function nid(p){return p+Date.now().toString(36)+Math.floor(Math.random()*1e4)}
+  $("addMed").onclick=function(){draft.meds.push({id:nid("m"),label:"",time:""});renderSettings()};
+  $("addSup").onclick=function(){draft.sups.push({id:nid("s"),label:"",time:""});renderSettings()};
+  $("addRem").onclick=function(){draft.reminders.push("");renderSettings()};
+  $("saveCfg").onclick=function(){
+    draft.meds=draft.meds.filter(function(m){return m.label.trim()});
+    draft.sups=draft.sups.filter(function(m){return m.label.trim()});
+    draft.reminders=draft.reminders.map(function(r){return r.trim()}).filter(Boolean);
+    state.cfg=draft;draft=null;render();renderSettings();
+    if(API){post({action:"setCfg",cfg:state.cfg});toast("設定已儲存")}
+    else toast("設定已套用（還沒連線，不會存起來）");
+  };
+
+  render();renderSettings();
+  load();
+  setInterval(load,30000);
+  document.addEventListener("visibilitychange",function(){if(!document.hidden)load()});
+})();
+</script>
+</body>
+</html>
